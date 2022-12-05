@@ -51,10 +51,10 @@
 //! | [`actix`](https://crates.io/crates/actix-web) | [`Responder`](https://docs.rs/actix-web/latest/actix_web/trait.Responder.html) implementation for [`FastString`]. |
 //! | [`serde`](https://crates.io/crates/serde) | [`Serialize`](https://docs.rs/arbitrary/latest/arbitrary/trait.Arbitrary.html) and [`Deserialize`](https://docs.rs/serde/latest/serde/trait.Deserialize.html) implementations for [`FastString`]. |
 
-mod str;
+mod backend;
 mod iter;
 mod normal;
 mod pattern;
 mod stack;
 
-pub use self::str::FastString;
+pub use self::backend::FastString;

@@ -14,10 +14,10 @@ include = [
 keywords = ["serde", "serialization", "string"]
 license = "MIT"
 name = "fast-str"
-rust-version = "1.59.0"
-version = "0.1.0"
 readme = "README.md"
 repository = "https://github.com/xxXyh1908/rust-fast-str"
+rust-version = "1.59.0"
+version = "0.1.0"
 
 [features]
 actix = ["dep:actix-web"]
@@ -25,6 +25,7 @@ arbitrary = ["dep:arbitrary"]
 default = []
 rocket = ["dep:rocket"]
 serde = ["dep:serde"]
+stack = []
 
 [dependencies]
 actix-web = {version = "*", default-features = false, optional = true}
