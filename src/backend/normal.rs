@@ -3,6 +3,7 @@ use crate::normal::NormalString;
 #[derive(Clone)]
 pub struct FastString(NormalString);
 
+#[allow(unused)]
 impl FastString {
     #[inline]
     pub(super) fn do_sub_with<

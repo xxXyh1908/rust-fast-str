@@ -66,6 +66,7 @@ impl FaststrInner {
     }
 }
 
+#[allow(unused)]
 impl FastString {
     pub(super) fn do_sub_with<
         'a,

@@ -17,14 +17,14 @@ use std::{
 
 #[doc(hidden)]
 #[cfg(any(not(feature = "stack"), target_pointer_width = "16", target_pointer_width = "32"))]
-#[path = "backend_normal.rs"]
+#[path = "normal.rs"]
 mod internal;
 #[doc(hidden)]
 #[cfg(not(any(not(feature = "stack"), target_pointer_width = "16", target_pointer_width = "32")))]
-#[path = "backend_stack.rs"]
-mod stack_backend;
+#[path = "stack.rs"]
+mod internal;
 
-pub use self::stack_backend::FastString;
+pub use self::internal::FastString;
 
 unsafe impl Sync for FastString {}
 unsafe impl Send for FastString {}
