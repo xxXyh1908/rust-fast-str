@@ -1,0 +1,45 @@
+[package]
+authors = ["xxXyh1908"]
+categories = ["data-structures", "text-processing"]
+description = "A flexible, easy-to-use, immutable, efficient `String` replacement for Rust."
+edition = "2021"
+include = [
+  "build.rs",
+  "src/**/*",
+  "Cargo.toml",
+  "LICENSE*",
+  "README.md",
+  "benches/**/*",
+]
+keywords = ["serde", "serialization", "string"]
+license = "MIT"
+name = "fast-str"
+rust-version = "1.59.0"
+version = "0.1.0"
+readme = "README.md"
+repository = "https://github.com/xxXyh1908/rust-fast-str"
+
+[features]
+actix = ["dep:actix-web"]
+arbitrary = ["dep:arbitrary"]
+default = []
+rocket = ["dep:rocket"]
+serde = ["dep:serde"]
+
+[dependencies]
+actix-web = {version = "*", default-features = false, optional = true}
+arbitrary = {version = "*", default-features = false, optional = true}
+rocket = {version = "*", default-features = false, optional = true}
+serde = {version = "*", default-features = false, optional = true}
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+
+[dev-dependencies]
+criterion = "0.4"
+proptest = "1.0"
+
+[[bench]]
+harness = false
+name = "bench"
