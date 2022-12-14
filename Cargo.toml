@@ -21,10 +21,6 @@ version = "0.1.0"
 
 [features]
 default = []
-actix = ["dep:actix-web"]
-arbitrary = ["dep:arbitrary"]
-rocket = ["dep:rocket"]
-serde = ["dep:serde"]
 stack = []
 
 [dependencies]

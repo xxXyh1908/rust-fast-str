@@ -16,11 +16,19 @@ use std::{
 };
 
 #[doc(hidden)]
-#[cfg(any(not(feature = "stack"), target_pointer_width = "16", target_pointer_width = "32"))]
+#[cfg(any(
+    not(feature = "stack"),
+    target_pointer_width = "16",
+    target_pointer_width = "32"
+))]
 #[path = "normal.rs"]
 mod internal;
 #[doc(hidden)]
-#[cfg(not(any(not(feature = "stack"), target_pointer_width = "16", target_pointer_width = "32")))]
+#[cfg(not(any(
+    not(feature = "stack"),
+    target_pointer_width = "16",
+    target_pointer_width = "32"
+)))]
 #[path = "stack.rs"]
 mod internal;
 
@@ -1139,6 +1147,34 @@ impl From<&Cow<'static, String>> for FastString {
     }
 }
 
+impl From<()> for FastString {
+    #[inline]
+    fn from(_: ()) -> Self {
+        Self::new()
+    }
+}
+
+impl From<&()> for FastString {
+    #[inline]
+    fn from(_: &()) -> Self {
+        Self::new()
+    }
+}
+
+impl From<bool> for FastString {
+    #[inline]
+    fn from(b: bool) -> Self {
+        Self::from_static(if b { "true" } else { "false" })
+    }
+}
+
+impl From<&bool> for FastString {
+    #[inline]
+    fn from(b: &bool) -> Self {
+        Self::from(*b)
+    }
+}
+
 impl From<FastString> for String {
     #[inline]
     fn from(str: FastString) -> Self {
@@ -1372,7 +1408,7 @@ impl wasm_bindgen::convert::OptionIntoWasmAbi for FastString {
     }
 }
 
-#[cfg(feature = "actix")]
+#[cfg(feature = "actix-web")]
 impl actix_web::Responder for FastString {
     type Body = <String as actix_web::Responder>::Body;
 
@@ -1382,7 +1418,7 @@ impl actix_web::Responder for FastString {
     }
 }
 
-#[cfg(feature = "actix")]
+#[cfg(feature = "actix-web")]
 impl actix_web::Responder for &FastString {
     type Body = <String as actix_web::Responder>::Body;
 
