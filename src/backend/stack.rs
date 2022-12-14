@@ -9,15 +9,15 @@ use std::{
 
 const STACK_STRING_SIZE: usize = size_of::<NormalString>() - size_of::<*const u8>();
 
-union FaststrInner {
+union FastStrInner {
     ptr: *const u8,
     inline: (*const u8, StackString<STACK_STRING_SIZE>),
     normal: ManuallyDrop<NormalString>,
 }
 
-pub struct FastStr(FaststrInner);
+pub struct FastStr(FastStrInner);
 
-impl FaststrInner {
+impl FastStrInner {
     #[inline(always)]
     fn is_inline(&self) -> bool {
         unsafe { self.ptr.is_null() }
@@ -130,12 +130,12 @@ impl FastStr {
 
     #[inline(always)]
     const fn from_inline(inline: StackString<STACK_STRING_SIZE>) -> Self {
-        Self(FaststrInner::from_inline(inline))
+        Self(FastStrInner::from_inline(inline))
     }
 
     #[inline(always)]
     const fn from_normal(normal: NormalString) -> Self {
-        Self(FaststrInner::from_normal(normal))
+        Self(FastStrInner::from_normal(normal))
     }
 
     /// Create an empty FastStr.
@@ -204,7 +204,7 @@ impl Clone for FastStr {
     }
 }
 
-impl Drop for FaststrInner {
+impl Drop for FastStrInner {
     fn drop(&mut self) {
         if !self.is_inline() {
             unsafe { ManuallyDrop::drop(&mut self.normal) }
