@@ -50,6 +50,7 @@ fast-str = { version = "*", features = ["rocket", "serde"] }
 | ------- | ----------- |
 | [`arbitrary`](https://crates.io/crates/arbitrary) | [`Arbitrary`](https://docs.rs/arbitrary/latest/arbitrary/trait.Arbitrary.html) implementation for [`FastStr`]. |
 | [`rocket`](https://crates.io/crates/rocket) | [`Responder`](https://api.rocket.rs/v0.4/rocket/response/trait.Responder.html) implementation for [`FastStr`]. |
+| [`actix-web`](https://crates.io/crates/actix-web) | [`Responder`](https://docs.rs/actix-web/latest/actix_web/trait.Responder.html) implementation for [`FastStr`]. |
 | [`serde`](https://crates.io/crates/serde) | [`Serialize`](https://docs.rs/arbitrary/latest/arbitrary/trait.Arbitrary.html) and [`Deserialize`](https://docs.rs/serde/latest/serde/trait.Deserialize.html) implementations for [`FastStr`]. |
 
 ## License
