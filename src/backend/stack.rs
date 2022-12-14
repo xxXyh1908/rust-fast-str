@@ -15,7 +15,7 @@ union FaststrInner {
     normal: ManuallyDrop<NormalString>,
 }
 
-pub struct FastString(FaststrInner);
+pub struct FastStr(FaststrInner);
 
 impl FaststrInner {
     #[inline(always)]
@@ -67,7 +67,7 @@ impl FaststrInner {
 }
 
 #[allow(unused)]
-impl FastString {
+impl FastStr {
     pub(super) fn do_sub_with<
         'a,
         R: 'a,
@@ -138,25 +138,25 @@ impl FastString {
         Self(FaststrInner::from_normal(normal))
     }
 
-    /// Create an empty FastString.
+    /// Create an empty FastStr.
     #[inline]
     pub const fn new() -> Self {
         Self::from_static("")
     }
 
-    /// Create a FastString based on a `'static` data reference .
+    /// Create a FastStr based on a `'static` data reference .
     #[inline]
     pub const fn from_static(str: &'static str) -> Self {
         Self::from_normal(NormalString::from_static(str))
     }
 
-    /// Create a FastString based on String storage.
+    /// Create a FastStr based on String storage.
     #[inline]
     pub fn from_string(str: String) -> Self {
         Self::from_normal(NormalString::from_string(str))
     }
 
-    /// Create an FastString and automatically use the best storage method.
+    /// Create an FastStr and automatically use the best storage method.
     pub fn from_ref(str: &str) -> Self {
         if str.len() <= StackString::<STACK_STRING_SIZE>::MAX_LEN {
             Self::from_inline(StackString::new(str))
@@ -174,7 +174,7 @@ impl FastString {
         }
     }
 
-    /// Extracts a string slice containing the entire [FastString].
+    /// Extracts a string slice containing the entire [FastStr].
     pub fn as_str(&self) -> &str {
         if self.is_inline() {
             self.get_inline_ref().as_str()
@@ -183,7 +183,7 @@ impl FastString {
         }
     }
 
-    /// Judge whether [FastString] uses static storage.
+    /// Judge whether [FastStr] uses static storage.
     pub fn is_static(&self) -> bool {
         if self.is_inline() {
             false
@@ -193,7 +193,7 @@ impl FastString {
     }
 }
 
-impl Clone for FastString {
+impl Clone for FastStr {
     /// O(1) Clone() of time complexity.
     fn clone(&self) -> Self {
         if self.is_inline() {

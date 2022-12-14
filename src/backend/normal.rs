@@ -1,10 +1,10 @@
 use crate::normal::NormalString;
 
 #[derive(Clone)]
-pub struct FastString(NormalString);
+pub struct FastStr(NormalString);
 
 #[allow(unused)]
-impl FastString {
+impl FastStr {
     #[inline]
     pub(super) fn do_sub_with<
         'a,
@@ -23,25 +23,25 @@ impl FastString {
         Self(self.0.map_ref_into(str))
     }
 
-    /// Create an empty FastString.
+    /// Create an empty FastStr.
     #[inline]
     pub const fn new() -> Self {
         Self::from_static("")
     }
 
-    /// Create a FastString based on a `'static` data reference .
+    /// Create a FastStr based on a `'static` data reference .
     #[inline]
     pub const fn from_static(str: &'static str) -> Self {
         Self(NormalString::from_static(str))
     }
 
-    /// Create a FastString based on String storage.
+    /// Create a FastStr based on String storage.
     #[inline]
     pub fn from_string(str: String) -> Self {
         Self(NormalString::from_string(str))
     }
 
-    /// Create an FastString and automatically use the best storage method.
+    /// Create an FastStr and automatically use the best storage method.
     #[inline]
     pub fn from_ref(str: &str) -> Self {
         Self(NormalString::from_string(str.into()))
@@ -53,13 +53,13 @@ impl FastString {
         self.0.into_string()
     }
 
-    /// Extracts a string slice containing the entire [FastString].
+    /// Extracts a string slice containing the entire [FastStr].
     #[inline]
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }
 
-    /// Judge whether [FastString] uses static storage.
+    /// Judge whether [FastStr] uses static storage.
     #[inline]
     pub fn is_static(&self) -> bool {
         self.0.is_static()

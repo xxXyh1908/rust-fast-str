@@ -1,7 +1,7 @@
 #![allow(clippy::clone_on_copy, clippy::useless_conversion, clippy::clone_double_ref)]
 
 use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
-use fast_str::FastString;
+use fast_str::FastStr;
 
 pub static FIXTURES: &[(BatchSize, &'static str)] = &[
     (BatchSize::SmallInput, "012345678901234"),
@@ -22,23 +22,23 @@ fn bench_eq(c: &mut Criterion) {
             b.iter_batched(|| &fixture, |(uut1, uut2)| assert!(PartialEq::eq(uut1, uut2)), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("PartialEq<FastString, &str>", len), |b| {
-            let fixture = (criterion::black_box(FastString::from_ref(fixture)), criterion::black_box(fixture));
+        group.bench_function(BenchmarkId::new("PartialEq<FastStr, &str>", len), |b| {
+            let fixture = (criterion::black_box(FastStr::from_ref(fixture)), criterion::black_box(fixture));
             b.iter_batched(|| &fixture, |(uut1, uut2)| assert!(PartialEq::eq(uut1, uut2)), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("PartialEq<FastString::from_static, &str>", len), |b| {
-            let fixture = (criterion::black_box(FastString::from_static(fixture)), criterion::black_box(fixture));
+        group.bench_function(BenchmarkId::new("PartialEq<FastStr::from_static, &str>", len), |b| {
+            let fixture = (criterion::black_box(FastStr::from_static(fixture)), criterion::black_box(fixture));
             b.iter_batched(|| &fixture, |(uut1, uut2)| assert!(PartialEq::eq(uut1, uut2)), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("PartialEq<FastString, FastString>", len), |b| {
-            let fixture = (criterion::black_box(FastString::from_ref(fixture)), criterion::black_box(FastString::from_ref(fixture)));
+        group.bench_function(BenchmarkId::new("PartialEq<FastStr, FastStr>", len), |b| {
+            let fixture = (criterion::black_box(FastStr::from_ref(fixture)), criterion::black_box(FastStr::from_ref(fixture)));
             b.iter_batched(|| &fixture, |(uut1, uut2)| assert!(PartialEq::eq(uut1, uut2)), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("PartialEq<FastString::from_static, FastString::from_static>", len), |b| {
-            let fixture = (criterion::black_box(FastString::from_static(fixture)), criterion::black_box(FastString::from_static(fixture)));
+        group.bench_function(BenchmarkId::new("PartialEq<FastStr::from_static, FastStr::from_static>", len), |b| {
+            let fixture = (criterion::black_box(FastStr::from_static(fixture)), criterion::black_box(FastStr::from_static(fixture)));
             b.iter_batched(|| &fixture, |(uut1, uut2)| assert!(PartialEq::eq(uut1, uut2)), batch_size)
         });
     }
@@ -54,18 +54,18 @@ fn bench_access(c: &mut Criterion) {
             b.iter_batched(|| &fixture, |uut| uut.len(), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("FastString::from_static", len), |b| {
-            let fixture = criterion::black_box(FastString::from_static(fixture));
+        group.bench_function(BenchmarkId::new("FastStr::from_static", len), |b| {
+            let fixture = criterion::black_box(FastStr::from_static(fixture));
             b.iter_batched(|| &fixture, |uut| uut.len(), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("FastString::from_ref", len), |b| {
-            let fixture = criterion::black_box(FastString::from_ref(fixture));
+        group.bench_function(BenchmarkId::new("FastStr::from_ref", len), |b| {
+            let fixture = criterion::black_box(FastStr::from_ref(fixture));
             b.iter_batched(|| &fixture, |uut| uut.len(), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("FastString::from_string", len), |b| {
-            let fixture = criterion::black_box(FastString::from_string(String::from(fixture)));
+        group.bench_function(BenchmarkId::new("FastStr::from_string", len), |b| {
+            let fixture = criterion::black_box(FastStr::from_string(String::from(fixture)));
             b.iter_batched(|| &fixture, |uut| uut.len(), batch_size)
         });
     }
@@ -81,18 +81,18 @@ fn bench_clone(c: &mut Criterion) {
             b.iter_batched(|| &fixture, |uut| uut.clone(), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("FastString::from_static", len), |b| {
-            let fixture = criterion::black_box(FastString::from_static(fixture));
+        group.bench_function(BenchmarkId::new("FastStr::from_static", len), |b| {
+            let fixture = criterion::black_box(FastStr::from_static(fixture));
             b.iter_batched(|| &fixture, |uut| uut.clone(), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("FastString::from_ref", len), |b| {
-            let fixture = criterion::black_box(FastString::from_ref(fixture));
+        group.bench_function(BenchmarkId::new("FastStr::from_ref", len), |b| {
+            let fixture = criterion::black_box(FastStr::from_ref(fixture));
             b.iter_batched(|| &fixture, |uut| uut.clone(), batch_size)
         });
 
-        group.bench_function(BenchmarkId::new("FastString::from_string", len), |b| {
-            let fixture = criterion::black_box(FastString::from_string(String::from(fixture)));
+        group.bench_function(BenchmarkId::new("FastStr::from_string", len), |b| {
+            let fixture = criterion::black_box(FastStr::from_string(String::from(fixture)));
             b.iter_batched(|| &fixture, |uut| uut.clone(), batch_size)
         });
     }

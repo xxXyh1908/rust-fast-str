@@ -32,21 +32,21 @@ mod internal;
 #[path = "stack.rs"]
 mod internal;
 
-pub use self::internal::FastString;
+pub use self::internal::FastStr;
 
-unsafe impl Sync for FastString {}
-unsafe impl Send for FastString {}
+unsafe impl Sync for FastStr {}
+unsafe impl Send for FastStr {}
 
-impl FastString {
-    /// Creates a new [FastString] by repeating a string `n` times.
+impl FastStr {
+    /// Creates a new [FastStr] by repeating a string `n` times.
     ///
     /// # Examples
     ///
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// assert_eq!(FastString::from("abc").repeat(4), "abcabcabcabc");
+    /// use fast_str::FastStr;
+    /// assert_eq!(FastStr::from("abc").repeat(4), "abcabcabcabc");
     /// ```
     pub fn repeat(&self, n: usize) -> Self {
         if n == 1 {
@@ -68,8 +68,8 @@ impl FastString {
     /// # Examples
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("Grüße, Jürgen ❤");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("Grüße, Jürgen ❤");
     ///
     /// assert_eq!("GRüßE, JüRGEN ❤", s.to_ascii_uppercase());
     /// ```
@@ -92,8 +92,8 @@ impl FastString {
     /// # Examples
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("Grüße, Jürgen ❤");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("Grüße, Jürgen ❤");
     ///
     /// assert_eq!("grüße, jürgen ❤", s.to_ascii_lowercase());
     /// ```
@@ -104,13 +104,13 @@ impl FastString {
         Self::from_string(self.as_str().to_ascii_lowercase())
     }
 
-    /// Returns the uppercase equivalent of this string slice, as a new [FastString].
+    /// Returns the uppercase equivalent of this string slice, as a new [FastStr].
     ///
     /// 'Uppercase' is defined according to the terms of the Unicode Derived Core Property
     /// `Uppercase`.
     ///
     /// Since some characters can expand into multiple characters when changing
-    /// the case, this function returns a [FastString] instead of modifying the
+    /// the case, this function returns a [FastStr] instead of modifying the
     /// parameter in-place.
     ///
     /// # Examples
@@ -118,8 +118,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("hello");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("hello");
     ///
     /// assert_eq!("HELLO", s.to_uppercase());
     /// ```
@@ -127,16 +127,16 @@ impl FastString {
     /// Scripts without case are not changed:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let new_year = FastString::from("农历新年");
+    /// use fast_str::FastStr;
+    /// let new_year = FastStr::from("农历新年");
     ///
     /// assert_eq!(new_year, new_year.to_uppercase());
     /// ```
     ///
     /// One character can become multiple:
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("tschüß");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("tschüß");
     ///
     /// assert_eq!("TSCHÜSS", s.to_uppercase());
     /// ```
@@ -145,13 +145,13 @@ impl FastString {
         Self::from_string(self.as_str().to_uppercase())
     }
 
-    /// Returns the lowercase equivalent of this string slice, as a new [FastString].
+    /// Returns the lowercase equivalent of this string slice, as a new [FastStr].
     ///
     /// 'Lowercase' is defined according to the terms of the Unicode Derived Core Property
     /// `Lowercase`.
     ///
     /// Since some characters can expand into multiple characters when changing
-    /// the case, this function returns a [FastString] instead of modifying the
+    /// the case, this function returns a [FastStr] instead of modifying the
     /// parameter in-place.
     ///
     /// # Examples
@@ -159,8 +159,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("HELLO");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("HELLO");
     ///
     /// assert_eq!("hello", s.to_lowercase());
     /// ```
@@ -168,13 +168,13 @@ impl FastString {
     /// A tricky example, with sigma:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let sigma = FastString::from("Σ");
+    /// use fast_str::FastStr;
+    /// let sigma = FastStr::from("Σ");
     ///
     /// assert_eq!("σ", sigma.to_lowercase());
     ///
     /// // but at the end of a word, it's ς, not σ:
-    /// let odysseus = FastString::from("ὈΔΥΣΣΕΎΣ");
+    /// let odysseus = FastStr::from("ὈΔΥΣΣΕΎΣ");
     ///
     /// assert_eq!("ὀδυσσεύς", odysseus.to_lowercase());
     /// ```
@@ -182,8 +182,8 @@ impl FastString {
     /// Languages without case are not changed:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let new_year = FastString::from("农历新年");
+    /// use fast_str::FastStr;
+    /// let new_year = FastStr::from("农历新年");
     ///
     /// assert_eq!(new_year, new_year.to_lowercase());
     /// ```
@@ -199,8 +199,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let bytes = FastString::from("bors").as_bytes();
+    /// use fast_str::FastStr;
+    /// let bytes = FastStr::from("bors").as_bytes();
     /// assert_eq!(b"bors", bytes);
     /// ```
     #[inline]
@@ -208,13 +208,13 @@ impl FastString {
         self.as_str().as_bytes()
     }
 
-    /// Returns an substring of [FastString].
+    /// Returns an substring of [FastStr].
     ///
     /// # Examples
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let v = FastString::from("🗻∈🌏");
+    /// use fast_str::FastStr;
+    /// let v = FastStr::from("🗻∈🌏");
     ///
     /// assert_eq!("🗻", v.slice(0..4));
     /// assert_eq!("∈", v.slice(4..7));
@@ -245,7 +245,7 @@ impl FastString {
         })
     }
 
-    /// Returns a [FastString] with leading and trailing whitespace removed.
+    /// Returns a [FastStr] with leading and trailing whitespace removed.
     ///
     /// 'Whitespace' is defined according to the terms of the Unicode Derived
     /// Core Property `White_Space`, which includes newlines.
@@ -255,8 +255,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("\n Hello\tworld\t\n");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("\n Hello\tworld\t\n");
     ///
     /// assert_eq!("Hello\tworld", s.trim());
     /// ```
@@ -270,7 +270,7 @@ impl FastString {
         self.do_sub_into(|str| str.trim())
     }
 
-    /// Returns a [FastString] with leading whitespace removed.
+    /// Returns a [FastStr] with leading whitespace removed.
     ///
     /// 'Whitespace' is defined according to the terms of the Unicode Derived
     /// Core Property `White_Space`, which includes newlines.
@@ -287,8 +287,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("\n Hello\tworld\t\n");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("\n Hello\tworld\t\n");
     /// assert_eq!("Hello\tworld\t\n", s.trim_start());
     /// ```
     #[inline]
@@ -301,7 +301,7 @@ impl FastString {
         self.do_sub_into(|str| str.trim_start())
     }
 
-    /// Returns a [FastString] with leading whitespace removed.
+    /// Returns a [FastStr] with leading whitespace removed.
     ///
     /// 'Whitespace' is defined according to the terms of the Unicode Derived
     /// Core Property `White_Space`.
@@ -318,8 +318,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from(" Hello\tworld\t");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from(" Hello\tworld\t");
     ///
     /// assert_eq!("Hello\tworld\t", s.trim_left());
     /// ```
@@ -333,7 +333,7 @@ impl FastString {
         self.do_sub_into(|str| str.trim_end())
     }
 
-    /// An iterator over the disjoint matches of a pattern within the given [FastString].
+    /// An iterator over the disjoint matches of a pattern within the given [FastStr].
     ///
     /// The `pattern` can be a `&str`, `char`, a slice of `char`s, or a
     /// function or closure that determines if a character matches.
@@ -345,8 +345,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let v: Vec<&str> = FastString::from("abcXXXabcYYYabc").matches("abc").collect();
+    /// use fast_str::FastStr;
+    /// let v: Vec<&str> = FastStr::from("abcXXXabcYYYabc").matches("abc").collect();
     /// //["abc", "abc", "abc"];
     ///
     /// let v: Vec<&str> = "1abc2abc3".matches(char::is_numeric).collect();
@@ -355,13 +355,13 @@ impl FastString {
     pub fn matches<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a {
+    ) -> impl Iterator<Item = FastStr> + 'a {
         self.do_sub_with(move |str, wrapper| {
             SearcherIterator::new(MatchesInternal::<P>::new(pat.into_searcher(str))).map(wrapper)
         })
     }
 
-    /// An iterator over the disjoint matches of a pattern within this [FastString]
+    /// An iterator over the disjoint matches of a pattern within this [FastStr]
     /// as well as the index that the match starts at.
     ///
     /// For matches of `pat` within `self` that overlap, only the indices
@@ -375,21 +375,21 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let v: Vec<_> = FastString::from("abcXXXabcYYYabc").match_indices("abc").collect();
+    /// use fast_str::FastStr;
+    /// let v: Vec<_> = FastStr::from("abcXXXabcYYYabc").match_indices("abc").collect();
     /// //[(0, "abc"), (6, "abc"), (12, "abc")];
     /// ```
     pub fn match_indices<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = (usize, FastString)> + 'a {
+    ) -> impl Iterator<Item = (usize, FastStr)> + 'a {
         self.do_sub_with(move |str, wrapper| {
             SearcherIterator::new(MatchIndicesInternal::<P>::new(pat.into_searcher(str)))
                 .map(move |(i, str)| (i, wrapper(str)))
         })
     }
 
-    /// An iterator over the disjoint matches of a pattern within this [FastString],
+    /// An iterator over the disjoint matches of a pattern within this [FastStr],
     /// yielded in reverse order.
     ///
     /// The `pattern` can be a `&str`, `char`, a slice of `char`s, or a
@@ -400,14 +400,14 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let v: Vec<&str> = FastString::from("abcXXXabcYYYabc").rmatches("abc").collect();
+    /// use fast_str::FastStr;
+    /// let v: Vec<&str> = FastStr::from("abcXXXabcYYYabc").rmatches("abc").collect();
     /// //["abc", "abc", "abc"];
     /// ```
     pub fn rmatches<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a
+    ) -> impl Iterator<Item = FastStr> + 'a
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -430,14 +430,14 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let v: Vec<_> = FastString::from("abcXXXabcYYYabc").rmatch_indices("abc").collect();
+    /// use fast_str::FastStr;
+    /// let v: Vec<_> = FastStr::from("abcXXXabcYYYabc").rmatch_indices("abc").collect();
     /// // [(12, "abc"), (6, "abc"), (0, "abc")];
     /// ```
     pub fn rmatch_indices<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = (usize, FastString)> + 'a
+    ) -> impl Iterator<Item = (usize, FastStr)> + 'a
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -449,7 +449,7 @@ impl FastString {
 
     /// Replaces all matches of a pattern with another string.
     ///
-    /// `replace` creates a new [FastString], and copies the data from this string slice into it.
+    /// `replace` creates a new [FastStr], and copies the data from this string slice into it.
     /// While doing so, it attempts to find matches of a pattern. If it finds any, it
     /// replaces them with the replacement string slice.
     ///
@@ -458,8 +458,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("this is old");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("this is old");
     ///
     /// assert_eq!("this is new", s.replace("old", "new"));
     /// assert_eq!("than an old", s.replace("is", "an"));
@@ -468,15 +468,15 @@ impl FastString {
     /// When the pattern doesn't match:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("this is old");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("this is old");
     /// assert_eq!(s, s.replace("cookie monster", "little lamb"));
     /// ```
     pub fn replace<'a, P: Pattern<'a> + 'a, To: AsRef<str>>(
         &'a self,
         from: P,
         to: To,
-    ) -> FastString {
+    ) -> FastStr {
         let mut result = String::with_capacity(32);
         let mut last_end = 0;
         let to = to.as_ref();
@@ -494,7 +494,7 @@ impl FastString {
 
     /// Replaces first N matches of a pattern with another string.
     ///
-    /// `replacen` creates a new [FastString], and copies the data from this string slice into it.
+    /// `replacen` creates a new [FastStr], and copies the data from this string slice into it.
     /// While doing so, it attempts to find matches of a pattern. If it finds any, it
     /// replaces them with the replacement string slice at most `count` times.
     ///
@@ -503,8 +503,8 @@ impl FastString {
     /// Basic usage:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("foo foo 123 foo");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("foo foo 123 foo");
     /// assert_eq!("new new 123 foo", s.replacen("foo", "new", 2));
     /// assert_eq!("faa fao 123 foo", s.replacen('o', "a", 3));
     /// assert_eq!("foo foo new23 foo", s.replacen(char::is_numeric, "new", 1));
@@ -513,8 +513,8 @@ impl FastString {
     /// When the pattern doesn't match:
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// let s = FastString::from("this is old");
+    /// use fast_str::FastStr;
+    /// let s = FastStr::from("this is old");
     /// assert_eq!(s, s.replacen("cookie monster", "little lamb", 10));
     /// ```
     pub fn replacen<'a, P: Pattern<'a> + 'a, To: AsRef<str>>(
@@ -522,7 +522,7 @@ impl FastString {
         from: P,
         to: To,
         count: usize,
-    ) -> FastString {
+    ) -> FastStr {
         let mut result = String::with_capacity(32);
         let mut last_end = 0;
         let to = to.as_ref();
@@ -544,7 +544,7 @@ impl FastString {
     pub fn split<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a {
+    ) -> impl Iterator<Item = FastStr> + 'a {
         self.do_sub_with(move |str, wrapper| {
             SearcherIterator::new(SplitInternal::<P> {
                 start: 0,
@@ -561,7 +561,7 @@ impl FastString {
         &'a self,
         n: usize,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a {
+    ) -> impl Iterator<Item = FastStr> + 'a {
         self.do_sub_with(move |str, wrapper| {
             SearcherIterator::new(SplitNInternal::<P> {
                 iter: SplitInternal {
@@ -580,7 +580,7 @@ impl FastString {
     pub fn split_terminator<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a {
+    ) -> impl Iterator<Item = FastStr> + 'a {
         self.do_sub_with(move |str, wrapper| {
             SearcherIterator::new(SplitInternal::<P> {
                 start: 0,
@@ -593,14 +593,14 @@ impl FastString {
         })
     }
 
-    /// An iterator over substrings of this [FastString], separated by
+    /// An iterator over substrings of this [FastStr], separated by
     /// characters matched by a pattern. Differs from the iterator produced by
     /// `split` in that `split_inclusive` leaves the matched part as the
     /// terminator of the substring.
     pub fn split_inclusive<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a {
+    ) -> impl Iterator<Item = FastStr> + 'a {
         self.do_sub_with(move |str, wrapper| {
             SearcherIterator::new(SplitInclusiveInternal::<P>(SplitInternal {
                 start: 0,
@@ -613,12 +613,12 @@ impl FastString {
         })
     }
 
-    pub fn split_whitespace<'a>(&'a self) -> impl Iterator<Item = FastString> + 'a {
+    pub fn split_whitespace<'a>(&'a self) -> impl Iterator<Item = FastStr> + 'a {
         self.split(char::is_whitespace)
             .filter(|str| !str.is_empty())
     }
 
-    pub fn split_ascii_whitespace<'a>(&'a self) -> impl Iterator<Item = FastString> + 'a {
+    pub fn split_ascii_whitespace<'a>(&'a self) -> impl Iterator<Item = FastStr> + 'a {
         self.do_sub_with(move |str, wrapper| {
             str.as_bytes()
                 .split(u8::is_ascii_whitespace)
@@ -630,7 +630,7 @@ impl FastString {
     pub fn split_once<'a, P: Pattern<'a>>(
         &'a self,
         delimiter: P,
-    ) -> Option<(FastString, FastString)> {
+    ) -> Option<(FastStr, FastStr)> {
         self.do_sub_with(move |str, wrapper| {
             let (start, end) = delimiter.into_searcher(str).next_match()?;
             // SAFETY: `Searcher` is known to return valid indices.
@@ -643,7 +643,7 @@ impl FastString {
         })
     }
 
-    pub fn split_at(&self, mid: usize) -> (FastString, FastString) {
+    pub fn split_at(&self, mid: usize) -> (FastStr, FastStr) {
         self.do_sub_with(move |str, wrapper| {
             // is_char_boundary checks that the index is in [0, .len()]
             if str.is_char_boundary(mid) {
@@ -663,7 +663,7 @@ impl FastString {
     pub fn rsplit<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a
+    ) -> impl Iterator<Item = FastStr> + 'a
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -683,7 +683,7 @@ impl FastString {
         &'a self,
         n: usize,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a
+    ) -> impl Iterator<Item = FastStr> + 'a
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -705,7 +705,7 @@ impl FastString {
     pub fn rsplit_terminator<'a, P: Pattern<'a> + 'a>(
         &'a self,
         pat: P,
-    ) -> impl Iterator<Item = FastString> + 'a
+    ) -> impl Iterator<Item = FastStr> + 'a
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -724,7 +724,7 @@ impl FastString {
     pub fn rsplit_once<'a, P: Pattern<'a>>(
         &'a self,
         delimiter: P,
-    ) -> Option<(FastString, FastString)>
+    ) -> Option<(FastStr, FastStr)>
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -740,7 +740,7 @@ impl FastString {
         })
     }
 
-    /// Returns a [FastString] with the prefix removed.
+    /// Returns a [FastStr] with the prefix removed.
     ///
     /// If the string starts with the pattern `prefix`, returns substring after the prefix, wrapped
     /// in `Some`.  Unlike `trim_start_matches`, this method removes the prefix exactly once.
@@ -750,16 +750,16 @@ impl FastString {
     /// # Examples
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// assert_eq!(FastString::from("foo:bar").strip_prefix("foo:"), Some(FastString("bar")));
-    /// assert_eq!(FastString::from("foo:bar").strip_prefix("bar"), None);
-    /// assert_eq!(FastString::from("foofoo").strip_prefix("foo"), Some(FastString("foo")));
+    /// use fast_str::FastStr;
+    /// assert_eq!(FastStr::from("foo:bar").strip_prefix("foo:"), Some(FastStr("bar")));
+    /// assert_eq!(FastStr::from("foo:bar").strip_prefix("bar"), None);
+    /// assert_eq!(FastStr::from("foofoo").strip_prefix("foo"), Some(FastStr("foo")));
     /// ```
-    pub fn strip_prefix<'a, P: Pattern<'a>>(&'a self, prefix: P) -> Option<FastString> {
+    pub fn strip_prefix<'a, P: Pattern<'a>>(&'a self, prefix: P) -> Option<FastStr> {
         self.do_sub_with(|str, wrapper| prefix.strip_prefix_of(str).map(wrapper))
     }
 
-    /// Returns a [FastString] with the suffix removed.
+    /// Returns a [FastStr] with the suffix removed.
     ///
     /// If the string ends with the pattern `suffix`, returns the substring before the suffix,
     /// wrapped in `Some`.  Unlike `trim_end_matches`, this method removes the suffix exactly once.
@@ -769,12 +769,12 @@ impl FastString {
     /// # Examples
     ///
     /// ```
-    /// use fast_str::FastString;
-    /// assert_eq!(FastString::from("bar:foo").strip_suffix(":foo"), Some(FastString::from("bar")));
-    /// assert_eq!(FastString::from("bar:foo").strip_suffix("bar"), None);
-    /// assert_eq!(FastString::from("foofoo").strip_suffix("foo"), Some(FastString::from("foo")));
+    /// use fast_str::FastStr;
+    /// assert_eq!(FastStr::from("bar:foo").strip_suffix(":foo"), Some(FastStr::from("bar")));
+    /// assert_eq!(FastStr::from("bar:foo").strip_suffix("bar"), None);
+    /// assert_eq!(FastStr::from("foofoo").strip_suffix("foo"), Some(FastStr::from("foo")));
     /// ```
-    pub fn strip_suffix<'a, P: Pattern<'a>>(&'a self, suffix: P) -> Option<FastString>
+    pub fn strip_suffix<'a, P: Pattern<'a>>(&'a self, suffix: P) -> Option<FastStr>
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -782,23 +782,23 @@ impl FastString {
     }
 }
 
-static FASTSTR_DEFAULT: FastString = FastString::new();
+static FASTSTR_DEFAULT: FastStr = FastStr::new();
 
-impl Default for FastString {
+impl Default for FastStr {
     #[inline]
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Default for &FastString {
+impl Default for &FastStr {
     #[inline]
     fn default() -> Self {
         &FASTSTR_DEFAULT
     }
 }
 
-impl Deref for FastString {
+impl Deref for FastStr {
     type Target = str;
 
     #[inline]
@@ -807,51 +807,51 @@ impl Deref for FastString {
     }
 }
 
-impl Borrow<str> for FastString {
+impl Borrow<str> for FastStr {
     #[inline]
     fn borrow(&self) -> &str {
         self.as_str()
     }
 }
 
-impl AsRef<str> for FastString {
+impl AsRef<str> for FastStr {
     #[inline]
     fn as_ref(&self) -> &str {
         self.as_str()
     }
 }
 
-impl AsRef<[u8]> for FastString {
+impl AsRef<[u8]> for FastStr {
     #[inline]
     fn as_ref(&self) -> &[u8] {
         self.as_str().as_ref()
     }
 }
 
-impl Hash for FastString {
+impl Hash for FastStr {
     #[inline]
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.as_str().hash(state)
     }
 }
 
-impl Eq for FastString {}
+impl Eq for FastStr {}
 
-impl PartialEq for FastString {
+impl PartialEq for FastStr {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         PartialEq::eq(self, other.as_str())
     }
 }
 
-impl PartialEq<&FastString> for FastString {
+impl PartialEq<&FastStr> for FastStr {
     #[inline]
-    fn eq(&self, other: &&FastString) -> bool {
+    fn eq(&self, other: &&FastStr) -> bool {
         PartialEq::eq(self, *other)
     }
 }
 
-impl PartialEq<str> for FastString {
+impl PartialEq<str> for FastStr {
     #[inline]
     fn eq(&self, other: &str) -> bool {
         let this = self.as_str();
@@ -860,63 +860,63 @@ impl PartialEq<str> for FastString {
     }
 }
 
-impl PartialEq<FastString> for str {
+impl PartialEq<FastStr> for str {
     #[inline]
-    fn eq(&self, other: &FastString) -> bool {
+    fn eq(&self, other: &FastStr) -> bool {
         PartialEq::eq(other, self)
     }
 }
 
-impl PartialEq<&str> for FastString {
+impl PartialEq<&str> for FastStr {
     #[inline]
     fn eq(&self, other: &&str) -> bool {
         PartialEq::eq(self, *other)
     }
 }
 
-impl PartialEq<FastString> for &str {
+impl PartialEq<FastStr> for &str {
     #[inline]
-    fn eq(&self, other: &FastString) -> bool {
+    fn eq(&self, other: &FastStr) -> bool {
         PartialEq::eq(other, *self)
     }
 }
 
-impl PartialEq<&FastString> for str {
+impl PartialEq<&FastStr> for str {
     #[inline]
-    fn eq(&self, other: &&FastString) -> bool {
+    fn eq(&self, other: &&FastStr) -> bool {
         PartialEq::eq(*other, self)
     }
 }
 
-impl PartialEq<String> for FastString {
+impl PartialEq<String> for FastStr {
     #[inline]
     fn eq(&self, other: &String) -> bool {
         PartialEq::eq(self.as_str(), other.as_str())
     }
 }
 
-impl PartialEq<FastString> for String {
+impl PartialEq<FastStr> for String {
     #[inline]
-    fn eq(&self, other: &FastString) -> bool {
+    fn eq(&self, other: &FastStr) -> bool {
         PartialEq::eq(other, self)
     }
 }
 
-impl PartialEq<&String> for FastString {
+impl PartialEq<&String> for FastStr {
     #[inline]
     fn eq(&self, other: &&String) -> bool {
         PartialEq::eq(self.as_str(), other.as_str())
     }
 }
 
-impl PartialEq<FastString> for &String {
+impl PartialEq<FastStr> for &String {
     #[inline]
-    fn eq(&self, other: &FastString) -> bool {
+    fn eq(&self, other: &FastStr) -> bool {
         PartialEq::eq(other, self)
     }
 }
 
-impl Ord for FastString {
+impl Ord for FastStr {
     #[inline]
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         let str1 = self.as_str();
@@ -928,21 +928,21 @@ impl Ord for FastString {
     }
 }
 
-impl PartialOrd for FastString {
+impl PartialOrd for FastStr {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(self, other.as_str())
     }
 }
 
-impl PartialOrd<&FastString> for FastString {
+impl PartialOrd<&FastStr> for FastStr {
     #[inline]
-    fn partial_cmp(&self, other: &&FastString) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &&FastStr) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(self, *other)
     }
 }
 
-impl PartialOrd<str> for FastString {
+impl PartialOrd<str> for FastStr {
     #[inline]
     fn partial_cmp(&self, other: &str) -> Option<std::cmp::Ordering> {
         let str1 = self.as_str();
@@ -954,70 +954,70 @@ impl PartialOrd<str> for FastString {
     }
 }
 
-impl PartialOrd<FastString> for str {
+impl PartialOrd<FastStr> for str {
     #[inline]
-    fn partial_cmp(&self, other: &FastString) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &FastStr) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(other, self)
     }
 }
 
-impl PartialOrd<&str> for FastString {
+impl PartialOrd<&str> for FastStr {
     #[inline]
     fn partial_cmp(&self, other: &&str) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(self.as_str(), *other)
     }
 }
 
-impl PartialOrd<&FastString> for str {
+impl PartialOrd<&FastStr> for str {
     #[inline]
-    fn partial_cmp(&self, other: &&FastString) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &&FastStr) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(*other, self)
     }
 }
 
-impl PartialOrd<FastString> for &str {
+impl PartialOrd<FastStr> for &str {
     #[inline]
-    fn partial_cmp(&self, other: &FastString) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &FastStr) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(other, *self)
     }
 }
 
-impl PartialOrd<String> for FastString {
+impl PartialOrd<String> for FastStr {
     #[inline]
     fn partial_cmp(&self, other: &String) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(self.as_str(), other.as_str())
     }
 }
 
-impl PartialOrd<FastString> for String {
+impl PartialOrd<FastStr> for String {
     #[inline]
-    fn partial_cmp(&self, other: &FastString) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &FastStr) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(other, self)
     }
 }
 
-impl PartialOrd<&String> for FastString {
+impl PartialOrd<&String> for FastStr {
     #[inline]
     fn partial_cmp(&self, other: &&String) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(self.as_str(), other.as_str())
     }
 }
 
-impl PartialOrd<FastString> for &String {
+impl PartialOrd<FastStr> for &String {
     #[inline]
-    fn partial_cmp(&self, other: &FastString) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &FastStr) -> Option<std::cmp::Ordering> {
         PartialOrd::partial_cmp(other, *self)
     }
 }
 
-impl Debug for FastString {
+impl Debug for FastStr {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         Debug::fmt(self.as_str(), f)
     }
 }
 
-impl Display for FastString {
+impl Display for FastStr {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         Display::fmt(self.as_str(), f)
@@ -1025,7 +1025,7 @@ impl Display for FastString {
 }
 
 #[cfg(feature = "serde")]
-impl serde::Serialize for FastString {
+impl serde::Serialize for FastStr {
     #[inline]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1036,7 +1036,7 @@ impl serde::Serialize for FastString {
 }
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for FastString {
+impl<'de> serde::Deserialize<'de> for FastStr {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -1050,7 +1050,7 @@ impl<'de> serde::Deserialize<'de> for FastString {
     }
 }
 
-impl FromStr for FastString {
+impl FromStr for FastStr {
     type Err = <String as FromStr>::Err;
 
     #[inline]
@@ -1063,176 +1063,176 @@ impl FromStr for FastString {
     }
 }
 
-impl From<&&str> for FastString {
+impl From<&&str> for FastStr {
     #[inline]
     fn from(str: &&str) -> Self {
         Self::from_ref(*str)
     }
 }
 
-impl From<&'static str> for FastString {
+impl From<&'static str> for FastStr {
     #[inline]
     fn from(str: &'static str) -> Self {
         Self::from_static(str)
     }
 }
 
-impl From<Rc<str>> for FastString {
+impl From<Rc<str>> for FastStr {
     #[inline]
     fn from(str: Rc<str>) -> Self {
         Self::from_ref(str.as_ref())
     }
 }
 
-impl From<Arc<str>> for FastString {
+impl From<Arc<str>> for FastStr {
     #[inline]
     fn from(str: Arc<str>) -> Self {
         Self::from_ref(str.as_ref())
     }
 }
 
-impl From<Box<str>> for FastString {
+impl From<Box<str>> for FastStr {
     #[inline]
     fn from(str: Box<str>) -> Self {
         Self::from_string(str.into())
     }
 }
 
-impl From<String> for FastString {
+impl From<String> for FastStr {
     #[inline]
     fn from(str: String) -> Self {
         Self::from_string(str)
     }
 }
 
-impl From<&String> for FastString {
+impl From<&String> for FastStr {
     #[inline]
     fn from(str: &String) -> Self {
         Self::from_ref(str)
     }
 }
 
-impl From<&FastString> for FastString {
+impl From<&FastStr> for FastStr {
     #[inline]
-    fn from(str: &FastString) -> Self {
+    fn from(str: &FastStr) -> Self {
         str.clone()
     }
 }
 
-impl From<Cow<'static, str>> for FastString {
+impl From<Cow<'static, str>> for FastStr {
     #[inline]
     fn from(str: Cow<'static, str>) -> Self {
         Self::from_string(str.into_owned())
     }
 }
 
-impl From<&Cow<'static, str>> for FastString {
+impl From<&Cow<'static, str>> for FastStr {
     #[inline]
     fn from(str: &Cow<'static, str>) -> Self {
         Self::from_ref(str.as_ref())
     }
 }
 
-impl From<Cow<'static, String>> for FastString {
+impl From<Cow<'static, String>> for FastStr {
     #[inline]
     fn from(str: Cow<'static, String>) -> Self {
         Self::from_string(str.into_owned())
     }
 }
 
-impl From<&Cow<'static, String>> for FastString {
+impl From<&Cow<'static, String>> for FastStr {
     #[inline]
     fn from(str: &Cow<'static, String>) -> Self {
         Self::from_ref(str.as_ref())
     }
 }
 
-impl From<()> for FastString {
+impl From<()> for FastStr {
     #[inline]
     fn from(_: ()) -> Self {
         Self::new()
     }
 }
 
-impl From<&()> for FastString {
+impl From<&()> for FastStr {
     #[inline]
     fn from(_: &()) -> Self {
         Self::new()
     }
 }
 
-impl From<bool> for FastString {
+impl From<bool> for FastStr {
     #[inline]
     fn from(b: bool) -> Self {
         Self::from_static(if b { "true" } else { "false" })
     }
 }
 
-impl From<&bool> for FastString {
+impl From<&bool> for FastStr {
     #[inline]
     fn from(b: &bool) -> Self {
         Self::from(*b)
     }
 }
 
-impl From<FastString> for String {
+impl From<FastStr> for String {
     #[inline]
-    fn from(str: FastString) -> Self {
+    fn from(str: FastStr) -> Self {
         str.into_string()
     }
 }
 
-impl From<FastString> for Box<str> {
+impl From<FastStr> for Box<str> {
     #[inline]
-    fn from(str: FastString) -> Self {
+    fn from(str: FastStr) -> Self {
         str.as_str().into()
     }
 }
 
-impl From<FastString> for Rc<str> {
+impl From<FastStr> for Rc<str> {
     #[inline]
-    fn from(str: FastString) -> Self {
+    fn from(str: FastStr) -> Self {
         str.as_str().into()
     }
 }
 
-impl From<FastString> for Arc<str> {
+impl From<FastStr> for Arc<str> {
     #[inline]
-    fn from(str: FastString) -> Self {
+    fn from(str: FastStr) -> Self {
         str.as_str().into()
     }
 }
 
-impl<'a> From<FastString> for Cow<'a, str> {
+impl<'a> From<FastStr> for Cow<'a, str> {
     #[inline]
-    fn from(str: FastString) -> Self {
+    fn from(str: FastStr) -> Self {
         Cow::from(String::from(str))
     }
 }
 
-impl From<&FastString> for String {
+impl From<&FastStr> for String {
     #[inline]
-    fn from(str: &FastString) -> Self {
+    fn from(str: &FastStr) -> Self {
         str.as_str().into()
     }
 }
 
-impl<'a> From<&'a FastString> for &'a str {
+impl<'a> From<&'a FastStr> for &'a str {
     #[inline]
-    fn from(str: &'a FastString) -> Self {
+    fn from(str: &'a FastStr) -> Self {
         str.as_str()
     }
 }
 
-impl<'a> From<&'a FastString> for Cow<'a, str> {
+impl<'a> From<&'a FastStr> for Cow<'a, str> {
     #[inline]
-    fn from(str: &'a FastString) -> Self {
+    fn from(str: &'a FastStr) -> Self {
         Cow::from(str.as_str())
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-impl From<js_sys::JsString> for FastString {
+impl From<js_sys::JsString> for FastStr {
     #[inline]
     fn from(str: js_sys::JsString) -> Self {
         Self::from_string(String::from(str))
@@ -1240,7 +1240,7 @@ impl From<js_sys::JsString> for FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl From<&js_sys::JsString> for FastString {
+impl From<&js_sys::JsString> for FastStr {
     #[inline]
     fn from(str: &js_sys::JsString) -> Self {
         Self::from_string(String::from(str))
@@ -1248,38 +1248,38 @@ impl From<&js_sys::JsString> for FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl From<FastString> for js_sys::JsString {
+impl From<FastStr> for js_sys::JsString {
     #[inline]
-    fn from(str: FastString) -> Self {
+    fn from(str: FastStr) -> Self {
         js_sys::JsString::from(str.as_str())
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-impl From<&FastString> for js_sys::JsString {
+impl From<&FastStr> for js_sys::JsString {
     #[inline]
-    fn from(str: &FastString) -> Self {
+    fn from(str: &FastStr) -> Self {
         js_sys::JsString::from(str.as_str())
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-impl From<FastString> for wasm_bindgen::JsValue {
+impl From<FastStr> for wasm_bindgen::JsValue {
     #[inline]
-    fn from(str: FastString) -> Self {
+    fn from(str: FastStr) -> Self {
         wasm_bindgen::JsValue::from_str(str.as_str())
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-impl From<&FastString> for wasm_bindgen::JsValue {
+impl From<&FastStr> for wasm_bindgen::JsValue {
     #[inline]
-    fn from(str: &FastString) -> Self {
+    fn from(str: &FastStr) -> Self {
         wasm_bindgen::JsValue::from_str(str.as_str())
     }
 }
 
-impl<A> FromIterator<A> for FastString
+impl<A> FromIterator<A> for FastStr
 where
     String: FromIterator<A>,
 {
@@ -1289,8 +1289,8 @@ where
     }
 }
 
-impl FromIterator<FastString> for FastString {
-    fn from_iter<T: IntoIterator<Item = FastString>>(iter: T) -> Self {
+impl FromIterator<FastStr> for FastStr {
+    fn from_iter<T: IntoIterator<Item = FastStr>>(iter: T) -> Self {
         let mut buf = String::new();
         for s in iter.into_iter() {
             buf += s.borrow();
@@ -1299,14 +1299,14 @@ impl FromIterator<FastString> for FastString {
     }
 }
 
-impl<'a> FromIterator<&'a FastString> for FastString {
-    fn from_iter<T: IntoIterator<Item = &'a FastString>>(iter: T) -> Self {
+impl<'a> FromIterator<&'a FastStr> for FastStr {
+    fn from_iter<T: IntoIterator<Item = &'a FastStr>>(iter: T) -> Self {
         Self::from_string(String::from_iter(iter.into_iter().map(|s| s.as_str())))
     }
 }
 
-impl Add<&str> for FastString {
-    type Output = FastString;
+impl Add<&str> for FastStr {
+    type Output = FastStr;
 
     #[inline]
     fn add(self, rhs: &str) -> Self::Output {
@@ -1314,26 +1314,26 @@ impl Add<&str> for FastString {
     }
 }
 
-impl Add<&FastString> for FastString {
-    type Output = FastString;
+impl Add<&FastStr> for FastStr {
+    type Output = FastStr;
 
     #[inline]
-    fn add(self, rhs: &FastString) -> Self::Output {
+    fn add(self, rhs: &FastStr) -> Self::Output {
         Self::from_string(String::from(self) + rhs.as_str())
     }
 }
 
-impl Add<FastString> for FastString {
-    type Output = FastString;
+impl Add<FastStr> for FastStr {
+    type Output = FastStr;
 
     #[inline]
-    fn add(self, rhs: FastString) -> Self::Output {
+    fn add(self, rhs: FastStr) -> Self::Output {
         Self::from_string(String::from(self) + rhs.as_str())
     }
 }
 
-impl Add<String> for FastString {
-    type Output = FastString;
+impl Add<String> for FastStr {
+    type Output = FastStr;
 
     #[inline]
     fn add(self, rhs: String) -> Self::Output {
@@ -1341,8 +1341,8 @@ impl Add<String> for FastString {
     }
 }
 
-impl Add<&String> for FastString {
-    type Output = FastString;
+impl Add<&String> for FastStr {
+    type Output = FastStr;
 
     #[inline]
     fn add(self, rhs: &String) -> Self::Output {
@@ -1351,7 +1351,7 @@ impl Add<&String> for FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl wasm_bindgen::describe::WasmDescribe for FastString {
+impl wasm_bindgen::describe::WasmDescribe for FastStr {
     #[inline]
     fn describe() {
         <String as wasm_bindgen::describe::WasmDescribe>::describe()
@@ -1359,7 +1359,7 @@ impl wasm_bindgen::describe::WasmDescribe for FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl wasm_bindgen::convert::FromWasmAbi for FastString {
+impl wasm_bindgen::convert::FromWasmAbi for FastStr {
     type Abi = <String as wasm_bindgen::convert::FromWasmAbi>::Abi;
 
     #[inline]
@@ -1369,7 +1369,7 @@ impl wasm_bindgen::convert::FromWasmAbi for FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl wasm_bindgen::convert::IntoWasmAbi for FastString {
+impl wasm_bindgen::convert::IntoWasmAbi for FastStr {
     type Abi = <&'static str as wasm_bindgen::convert::IntoWasmAbi>::Abi;
 
     #[inline]
@@ -1381,7 +1381,7 @@ impl wasm_bindgen::convert::IntoWasmAbi for FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl wasm_bindgen::convert::IntoWasmAbi for &FastString {
+impl wasm_bindgen::convert::IntoWasmAbi for &FastStr {
     type Abi = <&'static str as wasm_bindgen::convert::IntoWasmAbi>::Abi;
 
     #[inline]
@@ -1393,7 +1393,7 @@ impl wasm_bindgen::convert::IntoWasmAbi for &FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl wasm_bindgen::convert::OptionFromWasmAbi for FastString {
+impl wasm_bindgen::convert::OptionFromWasmAbi for FastStr {
     #[inline]
     fn is_none(abi: &Self::Abi) -> bool {
         <String as wasm_bindgen::convert::OptionFromWasmAbi>::is_none(abi)
@@ -1401,7 +1401,7 @@ impl wasm_bindgen::convert::OptionFromWasmAbi for FastString {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl wasm_bindgen::convert::OptionIntoWasmAbi for FastString {
+impl wasm_bindgen::convert::OptionIntoWasmAbi for FastStr {
     #[inline]
     fn none() -> Self::Abi {
         <&'static str as wasm_bindgen::convert::OptionIntoWasmAbi>::none()
@@ -1409,7 +1409,7 @@ impl wasm_bindgen::convert::OptionIntoWasmAbi for FastString {
 }
 
 #[cfg(feature = "actix-web")]
-impl actix_web::Responder for FastString {
+impl actix_web::Responder for FastStr {
     type Body = <String as actix_web::Responder>::Body;
 
     #[inline]
@@ -1419,7 +1419,7 @@ impl actix_web::Responder for FastString {
 }
 
 #[cfg(feature = "actix-web")]
-impl actix_web::Responder for &FastString {
+impl actix_web::Responder for &FastStr {
     type Body = <String as actix_web::Responder>::Body;
 
     #[inline]
@@ -1429,7 +1429,7 @@ impl actix_web::Responder for &FastString {
 }
 
 #[cfg(feature = "rocket")]
-impl<'r> rocket::response::Responder<'r> for FastString {
+impl<'r> rocket::response::Responder<'r> for FastStr {
     fn respond_to(self, request: &rocket::Request) -> rocket::response::Result<'r> {
         if self.is_static() {
             let str = unsafe { &*std::ptr::addr_of!(*self.as_str()) };
@@ -1442,7 +1442,7 @@ impl<'r> rocket::response::Responder<'r> for FastString {
 }
 
 #[cfg(feature = "arbitrary")]
-impl<'a> arbitrary::Arbitrary<'a> for FastString {
+impl<'a> arbitrary::Arbitrary<'a> for FastStr {
     #[inline]
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         <String as arbitrary::Arbitrary<'a>>::arbitrary(u).map(Self::from)
@@ -1459,7 +1459,7 @@ impl<'a> arbitrary::Arbitrary<'a> for FastString {
     }
 }
 
-impl<'a> Pattern<'a> for &'a FastString {
+impl<'a> Pattern<'a> for &'a FastStr {
     type Searcher = <&'a str as Pattern<'a>>::Searcher;
 
     fn into_searcher(self, haystack: &'a str) -> Self::Searcher {
@@ -1468,7 +1468,7 @@ impl<'a> Pattern<'a> for &'a FastString {
 }
 
 pub struct FaststrSearch<'a, 'b> {
-    _str: Box<FastString>,
+    _str: Box<FastStr>,
     searcher: StrSearcher<'a, 'b>,
 }
 
@@ -1484,7 +1484,7 @@ unsafe impl<'a, 'b> Searcher<'a> for FaststrSearch<'a, 'b> {
     }
 }
 
-impl<'a> Pattern<'a> for FastString {
+impl<'a> Pattern<'a> for FastStr {
     type Searcher = FaststrSearch<'a, 'a>;
 
     fn into_searcher(self, haystack: &'a str) -> Self::Searcher {
