@@ -24,7 +24,7 @@ default = []
 stack = []
 
 [dependencies]
-actix-web = {version = "*", default-features = false, optional = true}
+actix-web = {version = "*", optional = true}
 arbitrary = {version = "*", default-features = false, optional = true}
 rocket = {version = "*", default-features = false, optional = true}
 serde = {version = "*", default-features = false, optional = true}
