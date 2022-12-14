@@ -1408,25 +1408,25 @@ impl wasm_bindgen::convert::OptionIntoWasmAbi for FastStr {
     }
 }
 
-#[cfg(feature = "actix-web")]
-impl actix_web::Responder for FastStr {
-    type Body = <String as actix_web::Responder>::Body;
+// #[cfg(feature = "actix-web")]
+// impl actix_web::Responder for FastStr {
+//     type Body = <String as actix_web::Responder>::Body;
 
-    #[inline]
-    fn respond_to(self, req: &actix_web::HttpRequest) -> actix_web::HttpResponse<Self::Body> {
-        <String as actix_web::Responder>::respond_to(self.into(), req)
-    }
-}
+//     #[inline]
+//     fn respond_to(self, req: &actix_web::HttpRequest) -> actix_web::HttpResponse<Self::Body> {
+//         <String as actix_web::Responder>::respond_to(self.into(), req)
+//     }
+// }
 
-#[cfg(feature = "actix-web")]
-impl actix_web::Responder for &FastStr {
-    type Body = <String as actix_web::Responder>::Body;
+// #[cfg(feature = "actix-web")]
+// impl actix_web::Responder for &FastStr {
+//     type Body = <String as actix_web::Responder>::Body;
 
-    #[inline]
-    fn respond_to(self, req: &actix_web::HttpRequest) -> actix_web::HttpResponse<Self::Body> {
-        <String as actix_web::Responder>::respond_to(self.into(), req)
-    }
-}
+//     #[inline]
+//     fn respond_to(self, req: &actix_web::HttpRequest) -> actix_web::HttpResponse<Self::Body> {
+//         <String as actix_web::Responder>::respond_to(self.into(), req)
+//     }
+// }
 
 #[cfg(feature = "rocket")]
 impl<'r> rocket::response::Responder<'r> for FastStr {
