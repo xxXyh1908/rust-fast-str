@@ -3,6 +3,7 @@
 use std::ops::RangeBounds;
 
 /// Fixed-size stack-allocated string
+#[repr(transparent)]
 #[derive(Copy, Clone)]
 pub struct StackString<const SIZE: usize>([u8; SIZE]);
 

@@ -15,6 +15,7 @@ union FastStrInner {
     normal: ManuallyDrop<NormalString>,
 }
 
+#[repr(transparent)]
 pub struct FastStr(FastStrInner);
 
 impl FastStrInner {

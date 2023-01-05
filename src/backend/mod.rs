@@ -404,10 +404,7 @@ impl FastStr {
     /// let v: Vec<&str> = FastStr::from("abcXXXabcYYYabc").rmatches("abc").collect();
     /// //["abc", "abc", "abc"];
     /// ```
-    pub fn rmatches<'a, P: Pattern<'a> + 'a>(
-        &'a self,
-        pat: P,
-    ) -> impl Iterator<Item = FastStr> + 'a
+    pub fn rmatches<'a, P: Pattern<'a> + 'a>(&'a self, pat: P) -> impl Iterator<Item = FastStr> + 'a
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -472,11 +469,7 @@ impl FastStr {
     /// let s = FastStr::from("this is old");
     /// assert_eq!(s, s.replace("cookie monster", "little lamb"));
     /// ```
-    pub fn replace<'a, P: Pattern<'a> + 'a, To: AsRef<str>>(
-        &'a self,
-        from: P,
-        to: To,
-    ) -> FastStr {
+    pub fn replace<'a, P: Pattern<'a> + 'a, To: AsRef<str>>(&'a self, from: P, to: To) -> FastStr {
         let mut result = String::with_capacity(32);
         let mut last_end = 0;
         let to = to.as_ref();
@@ -541,10 +534,7 @@ impl FastStr {
 
     /// An iterator over substrings of this string slice, separated by
     /// characters matched by a pattern.
-    pub fn split<'a, P: Pattern<'a> + 'a>(
-        &'a self,
-        pat: P,
-    ) -> impl Iterator<Item = FastStr> + 'a {
+    pub fn split<'a, P: Pattern<'a> + 'a>(&'a self, pat: P) -> impl Iterator<Item = FastStr> + 'a {
         self.do_sub_with(move |str, wrapper| {
             SearcherIterator::new(SplitInternal::<P> {
                 start: 0,
@@ -627,10 +617,7 @@ impl FastStr {
         })
     }
 
-    pub fn split_once<'a, P: Pattern<'a>>(
-        &'a self,
-        delimiter: P,
-    ) -> Option<(FastStr, FastStr)> {
+    pub fn split_once<'a, P: Pattern<'a>>(&'a self, delimiter: P) -> Option<(FastStr, FastStr)> {
         self.do_sub_with(move |str, wrapper| {
             let (start, end) = delimiter.into_searcher(str).next_match()?;
             // SAFETY: `Searcher` is known to return valid indices.
@@ -660,10 +647,7 @@ impl FastStr {
         })
     }
 
-    pub fn rsplit<'a, P: Pattern<'a> + 'a>(
-        &'a self,
-        pat: P,
-    ) -> impl Iterator<Item = FastStr> + 'a
+    pub fn rsplit<'a, P: Pattern<'a> + 'a>(&'a self, pat: P) -> impl Iterator<Item = FastStr> + 'a
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -721,10 +705,7 @@ impl FastStr {
         })
     }
 
-    pub fn rsplit_once<'a, P: Pattern<'a>>(
-        &'a self,
-        delimiter: P,
-    ) -> Option<(FastStr, FastStr)>
+    pub fn rsplit_once<'a, P: Pattern<'a>>(&'a self, delimiter: P) -> Option<(FastStr, FastStr)>
     where
         P::Searcher: ReverseSearcher<'a>,
     {
@@ -1456,6 +1437,26 @@ impl<'a> arbitrary::Arbitrary<'a> for FastStr {
     #[inline]
     fn size_hint(depth: usize) -> (usize, Option<usize>) {
         <String as arbitrary::Arbitrary<'a>>::size_hint(depth)
+    }
+}
+
+#[cfg(feature = "diffus")]
+impl diffus::Same for FastStr {
+    fn same(&self, other: &Self) -> bool {
+        self == other
+    }
+}
+
+#[cfg(feature = "diffus")]
+impl<'a> diffus::Diffable<'a> for FastStr {
+    type Diff = (&'a Self, &'a Self);
+
+    fn diff(&'a self, other: &'a Self) -> diffus::edit::Edit<'a, Self> {
+        if self == other {
+            diffus::edit::Edit::Copy(self)
+        } else {
+            diffus::edit::Edit::Change((self, other))
+        }
     }
 }
 

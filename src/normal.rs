@@ -10,6 +10,7 @@ pub(super) enum NormalStringInner {
     Rc(Arc<String>),
 }
 
+#[repr(C)]
 #[derive(Clone)]
 pub struct NormalString {
     pub(super) str: &'static str,

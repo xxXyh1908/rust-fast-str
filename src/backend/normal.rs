@@ -1,5 +1,6 @@
 use crate::normal::NormalString;
 
+#[repr(transparent)]
 #[derive(Clone)]
 pub struct FastStr(NormalString);
 

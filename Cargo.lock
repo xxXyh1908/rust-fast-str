@@ -594,6 +594,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "diffus"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c0ff24a73b51d9009c40897faf87d31b77345c90ffbf4dc3a1d2957032c5653"
+dependencies = [
+ "itertools",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -620,11 +629,12 @@ dependencies = [
 
 [[package]]
 name = "fast-str"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "actix-web",
  "arbitrary",
  "criterion",
+ "diffus",
  "js-sys",
  "proptest",
  "rocket",
