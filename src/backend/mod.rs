@@ -852,8 +852,7 @@ impl PartialEq<str> for FastStr {
     #[inline]
     fn eq(&self, other: &str) -> bool {
         let this = self.as_str();
-        std::ptr::eq(std::ptr::addr_of!(*this), std::ptr::addr_of!(*other))
-            || PartialEq::eq(this, other)
+        std::ptr::eq(this as *const str, other as *const str) || PartialEq::eq(this, other)
     }
 }
 
@@ -918,7 +917,7 @@ impl Ord for FastStr {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         let str1 = self.as_str();
         let str2 = other.as_str();
-        if std::ptr::eq(std::ptr::addr_of!(*str1), std::ptr::addr_of!(*str2)) {
+        if std::ptr::eq(str1 as *const str, str2 as *const str) {
             return std::cmp::Ordering::Equal;
         }
         Ord::cmp(str1, str2)
@@ -944,7 +943,7 @@ impl PartialOrd<str> for FastStr {
     fn partial_cmp(&self, other: &str) -> Option<std::cmp::Ordering> {
         let str1 = self.as_str();
         let str2 = other;
-        if std::ptr::eq(std::ptr::addr_of!(*str1), std::ptr::addr_of!(*str2)) {
+        if std::ptr::eq(str1 as *const str, str2 as *const str)  {
             return Some(std::cmp::Ordering::Equal);
         }
         PartialOrd::partial_cmp(self.as_str(), other)
@@ -1560,7 +1559,8 @@ impl<'a> Pattern<'a> for &'a FastStr {
 }
 
 pub struct FastStrSearch<'a, 'b> {
-    _str: Box<FastStr>,
+    #[allow(unused)]
+    str: FastStr,
     searcher: StrSearcher<'a, 'b>,
 }
 
@@ -1580,11 +1580,10 @@ impl<'a> Pattern<'a> for FastStr {
     type Searcher = FastStrSearch<'a, 'a>;
 
     fn into_searcher(self, haystack: &'a str) -> Self::Searcher {
-        let _str = Box::new(self);
         let searcher = <&'a str as Pattern<'a>>::into_searcher(
-            unsafe { &*std::ptr::addr_of!(*_str.as_str()) },
+            unsafe { &*(self.as_str() as *const str) },
             haystack,
         );
-        FastStrSearch { _str, searcher }
+        FastStrSearch { str: self, searcher }
     }
 }
