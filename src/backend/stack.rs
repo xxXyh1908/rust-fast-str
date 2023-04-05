@@ -1,11 +1,5 @@
-use crate::{
-    normal::{NormalString, NormalStringInner},
-    stack::StackString,
-};
-use std::{
-    mem::{size_of, ManuallyDrop},
-    ops::DerefMut,
-};
+use crate::{normal::NormalString, stack::StackString};
+use std::mem::{size_of, ManuallyDrop};
 
 const STACK_STRING_SIZE: usize = size_of::<NormalString>() - size_of::<*const u8>();
 
@@ -42,13 +36,9 @@ impl FastStrInner {
     #[inline]
     fn get_normal(mut self) -> NormalString {
         unsafe {
-            NormalString {
-                str: self.normal.str,
-                inner: std::mem::replace(
-                    &mut self.normal.deref_mut().inner,
-                    NormalStringInner::Static,
-                ),
-            }
+            let result = ManuallyDrop::take(&mut self.normal);
+            std::mem::forget(self);
+            result
         }
     }
 
@@ -190,6 +180,15 @@ impl FastStr {
             false
         } else {
             self.get_normal_ref().is_static()
+        }
+    }
+
+    #[inline]
+    pub fn static_str(&self) -> Option<&'static str> {
+        if self.is_inline() {
+            None
+        } else {
+            self.get_normal_ref().static_str()
         }
     }
 }

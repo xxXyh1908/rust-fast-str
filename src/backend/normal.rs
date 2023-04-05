@@ -65,4 +65,9 @@ impl FastStr {
     pub fn is_static(&self) -> bool {
         self.0.is_static()
     }
+
+    #[inline]
+    pub fn static_str(&self) -> Option<&'static str> {
+        self.0.static_str()
+    }
 }

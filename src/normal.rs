@@ -4,10 +4,7 @@ use std::sync::Arc;
 #[derive(Clone)]
 pub(super) enum NormalStringInner {
     Static,
-    #[cfg(target_has_atomic)]
-    Rc(Rc<String>),
-    #[cfg(not(target_has_atomic))]
-    Rc(Arc<String>),
+    Arc(Arc<String>),
 }
 
 #[repr(C)]
@@ -44,16 +41,24 @@ impl NormalString {
 
     #[inline]
     pub fn is_static(&self) -> bool {
-        match &self.inner {
-            NormalStringInner::Static => true,
-            _ => false,
+        if let NormalStringInner::Static = &self.inner {
+            true
+        } else {
+            false
         }
     }
 
+    #[inline]
+    pub fn static_str(&self) -> Option<&'static str> {
+        if let NormalStringInner::Static = &self.inner {
+            Some(self.str)
+        } else {
+            None
+        }
+    }
+
+    #[inline]
     pub fn from_string(str: String) -> Self {
-        #[cfg(target_has_atomic)]
-        let str = Rc::new(str);
-        #[cfg(not(target_has_atomic))]
         let str = Arc::new(str);
 
         Self {
@@ -62,19 +67,15 @@ impl NormalString {
                 let ptr = std::ptr::addr_of!(*str);
                 &*ptr
             },
-            inner: NormalStringInner::Rc(str),
+            inner: NormalStringInner::Arc(str),
         }
     }
 
     pub fn into_string(self) -> String {
         let Self { str, inner, .. } = self;
-        if let NormalStringInner::Rc(rc) = inner {
-            if std::ptr::eq(std::ptr::addr_of!(*rc.as_str()), std::ptr::addr_of!(*str)) {
-                #[cfg(target_has_atomic)]
-                let result = Rc::try_unwrap(rc);
-
-                #[cfg(not(target_has_atomic))]
-                let result = Arc::try_unwrap(rc);
+        if let NormalStringInner::Arc(arc) = inner {
+            if std::ptr::eq(std::ptr::addr_of!(*arc.as_str()), std::ptr::addr_of!(*str)) {
+                let result = Arc::try_unwrap(arc);
 
                 if let Ok(str) = result {
                     return str;
@@ -94,7 +95,7 @@ impl NormalString {
 // fn optimize(this: &NormalString, other: &NormalString) {
 //     match &this.inner {
 //         NormalStringInner::Static => {
-//             if let NormalStringInner::Rc(_) = &other.inner {
+//             if let NormalStringInner::Arc(_) = &other.inner {
 //                 unsafe {
 //                     let ptr = std::ptr::addr_of!(*other) as *mut NormalString;
 //                     (*ptr).str = this.str;
@@ -102,7 +103,7 @@ impl NormalString {
 //                 }
 //             }
 //         }
-//         NormalStringInner::Rc(_) => {
+//         NormalStringInner::Arc(_) => {
 //             if let NormalStringInner::Static = &this.inner {
 //                 unsafe {
 //                     let ptr = std::ptr::addr_of!(*this) as *mut NormalString;

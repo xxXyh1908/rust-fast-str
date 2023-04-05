@@ -7,9 +7,12 @@ use super::{
 };
 use std::{
     borrow::{Borrow, Cow},
+    error::Error,
+    ffi::OsStr,
     fmt::{Debug, Display},
     hash::Hash,
     ops::{Add, Deref, RangeBounds},
+    path::{Path, PathBuf},
     rc::Rc,
     str::FromStr,
     sync::Arc,
@@ -763,8 +766,6 @@ impl FastStr {
     }
 }
 
-static FASTSTR_DEFAULT: FastStr = FastStr::new();
-
 impl Default for FastStr {
     #[inline]
     fn default() -> Self {
@@ -775,7 +776,8 @@ impl Default for FastStr {
 impl Default for &FastStr {
     #[inline]
     fn default() -> Self {
-        &FASTSTR_DEFAULT
+        const FAST_STR_DEFAULT: &FastStr = &FastStr::new();
+        FAST_STR_DEFAULT
     }
 }
 
@@ -805,6 +807,20 @@ impl AsRef<str> for FastStr {
 impl AsRef<[u8]> for FastStr {
     #[inline]
     fn as_ref(&self) -> &[u8] {
+        self.as_str().as_ref()
+    }
+}
+
+impl AsRef<Path> for FastStr {
+    #[inline]
+    fn as_ref(&self) -> &Path {
+        self.as_str().as_ref()
+    }
+}
+
+impl AsRef<OsStr> for FastStr {
+    #[inline]
+    fn as_ref(&self) -> &OsStr {
         self.as_str().as_ref()
     }
 }
@@ -1044,6 +1060,22 @@ impl FromStr for FastStr {
     }
 }
 
+impl TryFrom<&[u8]> for FastStr {
+    type Error = std::str::Utf8Error;
+
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        std::str::from_utf8(value).map(Self::from_ref)
+    }
+}
+
+impl TryFrom<Vec<u8>> for FastStr {
+    type Error = std::string::FromUtf8Error;
+
+    fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
+        String::from_utf8(value).map(Self::from_string)
+    }
+}
+
 impl From<&&str> for FastStr {
     #[inline]
     fn from(str: &&str) -> Self {
@@ -1055,6 +1087,13 @@ impl From<&'static str> for FastStr {
     #[inline]
     fn from(str: &'static str) -> Self {
         Self::from_static(str)
+    }
+}
+
+impl From<&mut str> for FastStr {
+    #[inline]
+    fn from(str: &mut str) -> Self {
+        Self::from_ref(str)
     }
 }
 
@@ -1100,30 +1139,30 @@ impl From<&FastStr> for FastStr {
     }
 }
 
-impl From<Cow<'static, str>> for FastStr {
+impl From<Cow<'_, str>> for FastStr {
     #[inline]
-    fn from(str: Cow<'static, str>) -> Self {
+    fn from(str: Cow<'_, str>) -> Self {
         Self::from_string(str.into_owned())
     }
 }
 
-impl From<&Cow<'static, str>> for FastStr {
+impl From<&Cow<'_, str>> for FastStr {
     #[inline]
-    fn from(str: &Cow<'static, str>) -> Self {
+    fn from(str: &Cow<'_, str>) -> Self {
         Self::from_ref(str.as_ref())
     }
 }
 
-impl From<Cow<'static, String>> for FastStr {
+impl From<Cow<'_, String>> for FastStr {
     #[inline]
-    fn from(str: Cow<'static, String>) -> Self {
+    fn from(str: Cow<'_, String>) -> Self {
         Self::from_string(str.into_owned())
     }
 }
 
-impl From<&Cow<'static, String>> for FastStr {
+impl From<&Cow<'_, String>> for FastStr {
     #[inline]
-    fn from(str: &Cow<'static, String>) -> Self {
+    fn from(str: &Cow<'_, String>) -> Self {
         Self::from_ref(str.as_ref())
     }
 }
@@ -1163,9 +1202,23 @@ impl From<FastStr> for String {
     }
 }
 
+impl From<FastStr> for PathBuf {
+    #[inline]
+    fn from(str: FastStr) -> Self {
+        str.into_string().into()
+    }
+}
+
 impl From<FastStr> for Box<str> {
     #[inline]
     fn from(str: FastStr) -> Self {
+        str.into_string().into()
+    }
+}
+
+impl From<&FastStr> for Box<str> {
+    #[inline]
+    fn from(str: &FastStr) -> Self {
         str.as_str().into()
     }
 }
@@ -1177,6 +1230,13 @@ impl From<FastStr> for Rc<str> {
     }
 }
 
+impl From<&FastStr> for Rc<str> {
+    #[inline]
+    fn from(str: &FastStr) -> Self {
+        str.as_str().into()
+    }
+}
+
 impl From<FastStr> for Arc<str> {
     #[inline]
     fn from(str: FastStr) -> Self {
@@ -1184,10 +1244,65 @@ impl From<FastStr> for Arc<str> {
     }
 }
 
-impl<'a> From<FastStr> for Cow<'a, str> {
+impl From<&FastStr> for Arc<str> {
+    #[inline]
+    fn from(str: &FastStr) -> Self {
+        str.as_str().into()
+    }
+}
+
+impl From<FastStr> for Vec<u8> {
     #[inline]
     fn from(str: FastStr) -> Self {
-        Cow::from(String::from(str))
+        str.into_string().into()
+    }
+}
+
+impl From<&FastStr> for Vec<u8> {
+    #[inline]
+    fn from(str: &FastStr) -> Self {
+        str.as_str().into()
+    }
+}
+
+impl From<FastStr> for Box<dyn Error + 'static> {
+    fn from(str: FastStr) -> Self {
+        str.into_string().into()
+    }
+}
+
+impl From<FastStr> for Box<dyn Error + Send + Sync + 'static> {
+    fn from(str: FastStr) -> Self {
+        str.into_string().into()
+    }
+}
+
+impl From<&FastStr> for Box<dyn Error + 'static> {
+    fn from(str: &FastStr) -> Self {
+        str.as_str().into()
+    }
+}
+
+impl From<&FastStr> for Box<dyn Error + Send + Sync + 'static> {
+    fn from(str: &FastStr) -> Self {
+        str.as_str().into()
+    }
+}
+
+impl<'a> From<FastStr> for Cow<'a, str> {
+    fn from(str: FastStr) -> Self {
+        if let Some(str) = str.static_str() {
+            Cow::Borrowed(str)
+        } else {
+            Cow::Owned(str.into_string())
+        }
+    }
+}
+
+impl<'a> From<&'a FastStr> for Cow<'a, str> {
+    #[inline]
+    fn from(str: &'a FastStr) -> Self {
+        Cow::Borrowed(str.as_str())
     }
 }
 
@@ -1202,13 +1317,6 @@ impl<'a> From<&'a FastStr> for &'a str {
     #[inline]
     fn from(str: &'a FastStr) -> Self {
         str.as_str()
-    }
-}
-
-impl<'a> From<&'a FastStr> for Cow<'a, str> {
-    #[inline]
-    fn from(str: &'a FastStr) -> Self {
-        Cow::from(str.as_str())
     }
 }
 
@@ -1351,25 +1459,21 @@ impl wasm_bindgen::convert::FromWasmAbi for FastStr {
 
 #[cfg(target_arch = "wasm32")]
 impl wasm_bindgen::convert::IntoWasmAbi for FastStr {
-    type Abi = <&'static str as wasm_bindgen::convert::IntoWasmAbi>::Abi;
+    type Abi = <String as wasm_bindgen::convert::IntoWasmAbi>::Abi;
 
     #[inline]
     fn into_abi(self) -> Self::Abi {
-        <&'static str as wasm_bindgen::convert::IntoWasmAbi>::into_abi(unsafe {
-            &*std::ptr::addr_of!(*self.as_str())
-        })
+        <String as wasm_bindgen::convert::IntoWasmAbi>::into_abi(self.into_string())
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-impl wasm_bindgen::convert::IntoWasmAbi for &FastStr {
-    type Abi = <&'static str as wasm_bindgen::convert::IntoWasmAbi>::Abi;
+impl<'a> wasm_bindgen::convert::IntoWasmAbi for &'a FastStr {
+    type Abi = <&'a str as wasm_bindgen::convert::IntoWasmAbi>::Abi;
 
     #[inline]
     fn into_abi(self) -> Self::Abi {
-        <&'static str as wasm_bindgen::convert::IntoWasmAbi>::into_abi(unsafe {
-            &*std::ptr::addr_of!(*self.as_str())
-        })
+        <&'a str as wasm_bindgen::convert::IntoWasmAbi>::into_abi(self.as_str())
     }
 }
 
@@ -1385,7 +1489,7 @@ impl wasm_bindgen::convert::OptionFromWasmAbi for FastStr {
 impl wasm_bindgen::convert::OptionIntoWasmAbi for FastStr {
     #[inline]
     fn none() -> Self::Abi {
-        <&'static str as wasm_bindgen::convert::OptionIntoWasmAbi>::none()
+        <String as wasm_bindgen::convert::OptionIntoWasmAbi>::none()
     }
 }
 
@@ -1406,19 +1510,6 @@ impl actix_web::Responder for &FastStr {
     #[inline]
     fn respond_to(self, req: &actix_web::HttpRequest) -> actix_web::HttpResponse<Self::Body> {
         <String as actix_web::Responder>::respond_to(self.into(), req)
-    }
-}
-
-#[cfg(feature = "rocket")]
-impl<'r> rocket::response::Responder<'r> for FastStr {
-    fn respond_to(self, request: &rocket::Request) -> rocket::response::Result<'r> {
-        if self.is_static() {
-            let str = unsafe { &*std::ptr::addr_of!(*self.as_str()) };
-            <&'static str as rocket::response::Responder<'r>>::respond_to(str, request)
-        } else {
-            let str: String = self.into();
-            <String as rocket::response::Responder<'r>>::respond_to(str, request)
-        }
     }
 }
 
@@ -1468,12 +1559,12 @@ impl<'a> Pattern<'a> for &'a FastStr {
     }
 }
 
-pub struct FaststrSearch<'a, 'b> {
+pub struct FastStrSearch<'a, 'b> {
     _str: Box<FastStr>,
     searcher: StrSearcher<'a, 'b>,
 }
 
-unsafe impl<'a, 'b> Searcher<'a> for FaststrSearch<'a, 'b> {
+unsafe impl<'a, 'b> Searcher<'a> for FastStrSearch<'a, 'b> {
     #[inline]
     fn haystack(&self) -> &'a str {
         self.searcher.haystack()
@@ -1486,7 +1577,7 @@ unsafe impl<'a, 'b> Searcher<'a> for FaststrSearch<'a, 'b> {
 }
 
 impl<'a> Pattern<'a> for FastStr {
-    type Searcher = FaststrSearch<'a, 'a>;
+    type Searcher = FastStrSearch<'a, 'a>;
 
     fn into_searcher(self, haystack: &'a str) -> Self::Searcher {
         let _str = Box::new(self);
@@ -1494,6 +1585,6 @@ impl<'a> Pattern<'a> for FastStr {
             unsafe { &*std::ptr::addr_of!(*_str.as_str()) },
             haystack,
         );
-        FaststrSearch { _str, searcher }
+        FastStrSearch { _str, searcher }
     }
 }
